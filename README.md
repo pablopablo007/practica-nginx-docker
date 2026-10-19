@@ -243,10 +243,10 @@ Accesible localmente en `http://localhost:8090`. Se observa el diseño oscuro mo
 
 ## 12. Audio Explicativo de Reflexión (60 Segundos)
 
-Como parte de los entregables de la práctica, se preparó un audio explicativo en primera persona con una duración aproximada de 60 segundos (~00:01:05), disponible en el repositorio:
+Como parte de los entregables de la práctica, se preparó un guion técnico estructurado en primera persona con una duración estimada de 60 segundos para ser grabado directamente con la voz del estudiante:
 
-- **Archivo MP3 generado:** [`audio/reflexion.mp3`](audio/reflexion.mp3)
-- **Documento del Guion e Instrucciones:** [`audio/guion-audio.md`](audio/guion-audio.md)
+- **Estado del Audio:** `[PENDIENTE: El estudiante grabará el archivo audio/reflexion.mp3 con su propia voz leyendo el guion]`
+- **Documento del Guion e Instrucciones de Grabación:** [`audio/guion-audio.md`](audio/guion-audio.md)
 
 ### Transcripción del Guion
 > "Hola. En esta práctica académica aprendí a implementar y personalizar dos servidores web independientes con Docker y Nginx.

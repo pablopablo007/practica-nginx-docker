@@ -1,11 +1,11 @@
 # Guion de Reflexión y Aprendizajes: Práctica Nginx con Docker
 
 ## Información del Audio
-- **Archivo generado:** [`reflexion.mp3`](reflexion.mp3)
-- **Formato:** MPEG Audio Layer 3 (MP3) a 192 kbps, estéreo, 44.1 kHz.
-- **Duración aproximada:** 60 segundos (~00:01:05).
-- **Voz TTS empleada en generación inicial:** Microsoft Sabina Desktop (Español Latinoamericano / México), generada mediante síntesis nativa de Windows y codificador de medios Windows Media Foundation sin servicios externos ni exposición de datos.
-- **Conteo de palabras del texto:** ~130 palabras (ritmo promedio de 130 palabras por minuto).
+- **Archivo de destino:** `reflexion.mp3` (en esta misma carpeta `audio/`)
+- **Estado:** Pendiente de grabación por parte del estudiante con su propia voz.
+- **Formato sugerido:** MPEG Audio Layer 3 (MP3) o audio grabado en smartphone/computadora.
+- **Duración objetivo:** Aproximadamente 60 segundos (~50 a 65 segundos).
+- **Conteo de palabras del texto:** ~130 palabras (lectura fluida a ritmo natural).
 
 ---
 
