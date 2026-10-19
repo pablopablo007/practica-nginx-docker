@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servidor Institucional Nginx - Nodo 1 | Práctica Docker</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-dark: #0f172a;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --success: #15803d;
+            --success-bg: #dcfce7;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --warning-border: #f59e0b;
+            --warning-bg: #fef3c7;
+            --warning-text: #92400e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: #ffffff;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+        }
+
+        .header-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .badge-portal {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(4px);
+            color: #ffffff;
+            padding: 0.35rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: var(--accent-light);
+            font-weight: 400;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .notice-bar {
+            background-color: var(--warning-bg);
+            border-bottom: 2px solid var(--warning-border);
+            color: var(--warning-text);
+            padding: 0.85rem 1.5rem;
+            font-size: 0.92rem;
+            text-align: center;
+        }
+
+        .notice-bar strong {
+            font-weight: 700;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background: var(--accent-light);
+            border-radius: 8px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .data-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .data-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .data-label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .data-value {
+            font-size: 1rem;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        /* Estilo especial para campos editables pendientes */
+        .campo-editable {
+            display: inline-block;
+            background-color: #fef08a;
+            color: #854d0e;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            border: 1px dashed #ca8a04;
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        .badge-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--success-bg);
+            color: var(--success);
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            border: 1px solid #86efac;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            background-color: var(--success);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(21, 128, 61, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(21, 128, 61, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(21, 128, 61, 0); }
+        }
+
+        .code-snippet {
+            background-color: #0f172a;
+            color: #38bdf8;
+            font-family: "Courier New", Courier, monospace;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin-top: 0.5rem;
+        }
+
+        .card-full {
+            grid-column: 1 / -1;
+        }
+
+        footer {
+            background-color: #0f172a;
+            color: #94a3b8;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            border-top: 1px solid #1e293b;
+        }
+
+        footer a {
+            color: #38bdf8;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.7rem;
+            }
+            .subtitle {
+                font-size: 1rem;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <span class="badge-portal">Infraestructura Web Institucional</span>
+            <h1>Portal de Servicios Académicos</h1>
+            <p class="subtitle">Servidor Web Nginx Nodo 1 desplegado sobre tecnología de contenedores Docker</p>
+        </div>
+    </header>
+
+    <div class="notice-bar">
+        <strong>Aviso de Configuración:</strong> Los campos resaltados en amarillo corresponden a información del estudiante que debe ser completada con sus datos reales.
+    </div>
+
+    <main>
+        <div class="grid">
+            <!-- Tarjeta 1: Información Institucional -->
+            <section class="card">
+                <div class="card-header">
+                    <div class="card-icon">🏛️</div>
+                    <h2 class="card-title">Datos Institucionales</h2>
+                </div>
+                <ul class="data-list">
+                    <li class="data-item">
+                        <span class="data-label">Institución Educativa:</span>
+                        <span class="data-value"><span class="campo-editable" title="Completar con el nombre de tu institución">[PENDIENTE: Nombre del Instituto / Universidad]</span></span>
+                    </li>
+                    <li class="data-item">
+                        <span class="data-label">Carrera Profesional:</span>
+                        <span class="data-value"><span class="campo-editable" title="Completar con el nombre de tu carrera">[PENDIENTE: Nombre de la Carrera / Especialidad]</span></span>
+                    </li>
+                    <li class="data-item">
+                        <span class="data-label">Asignatura:</span>
+                        <span class="data-value"><span class="campo-editable" title="Completar con la asignatura correspondiente">[PENDIENTE: Nombre de la Asignatura / Módulo]</span></span>
+                    </li>
+                    <li class="data-item">
+                        <span class="data-label">Docente Responsable:</span>
+                        <span class="data-value"><span class="campo-editable" title="Completar con el nombre de tu docente">[PENDIENTE: Nombre del Docente]</span></span>
+                    </li>
+                    <li class="data-item">
+                        <span class="data-label">Estudiante / Autor:</span>
+                        <span class="data-value"><span class="campo-editable" title="Completar con tu nombre completo">[PENDIENTE: Nombre Completo del Estudiante]</span></span>
+                    </li>
+                    <li class="data-item">
+                        <span class="data-label">Período Académico:</span>
+                        <span class="data-value"><span class="campo-editable" title="Completar con el ciclo o período lectivo">[PENDIENTE: Ciclo / Período 2026]</span></span>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Tarjeta 2: Propósito de la Práctica -->
+            <section class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <h2 class="card-title">Propósito de la Práctica</h2>
+                </div>
+                <ul class="data-list">
+                    <li class="data-item">
+                        <span class="data-label">Objetivo de la Instancia:</span>
+                        <span class="data-value">Demostrar el aprovisionamiento, encapsulación y publicación de un servidor web institucional desacoplado del sistema anfitrión.</span>
+                    </li>
+                    <li class="data-item">
+                        <span class="data-label">Aislamiento de Recursos:</span>
+                        <span class="data-value">El servidor opera en un espacio de nombres y sistema de archivos propio dentro de un contenedor Linux Nginx.</span>
+                    </li>
+                    <li class="data-item">
+                        <span class="data-label">Publicación de Puertos:</span>
+                        <span class="data-value">El puerto <strong>8089</strong> del anfitrión redirige el tráfico HTTP hacia el puerto estándar <strong>80</strong> del contenedor <code>nginx1</code>.</span>
+                    </li>
+                    <li class="data-item">
+                        <span class="data-label">Mecanismo de Despliegue:</span>
+                        <span class="data-value">Extracción de archivo original e inyección de contenido HTML personalizado mediante el comando <code>docker cp</code>.</span>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Tarjeta 3: Ficha Técnica del Contenedor -->
+            <section class="card">
+                <div class="card-header">
+                    <div class="card-icon">⚙️</div>
+                    <h2 class="card-title">Ficha Técnica: nginx1</h2>
+                </div>
+                <ul class="data-list">
+                    <li class="data-item">
+                        <span class="data-label">Nombre del Contenedor:</span>
+                        <span class="data-value"><code>nginx1</code></span>
+                    </li>
+                    <li class="data-item">
+                        <span class="data-label">Imagen Base Oficial:</span>
+                        <span class="data-value"><code>nginx:latest</code> (Servidor Web & Proxy Reverso)</span>
+                    </li>
+                    <li class="data-item">
+                        <span class="data-label">Mapeo de Puerto:</span>
+                        <span class="data-value"><strong>8089 (Host) &rarr; 80 (Contenedor)</strong></span>
+                    </li>
+                    <li class="data-item">
+                        <span class="data-label">Ruta Raíz Web Interna:</span>
+                        <span class="data-value"><code>/usr/share/nginx/html/index.html</code></span>
+                    </li>
+                    <li class="data-item">
+                        <span class="data-label">Estado Operativo:</span>
+                        <span class="data-value">
+                            <span class="badge-status">
+                                <span class="status-dot"></span> ACTIVO Y SIRVIENDO CONTENIDO
+                            </span>
+                        </span>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Tarjeta 4: Comandos de Referencia y Verificación -->
+            <section class="card card-full">
+                <div class="card-header">
+                    <div class="card-icon">💻</div>
+                    <h2 class="card-title">Secuencia de Comandos Ejecutados</h2>
+                </div>
+                <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                    Los siguientes comandos Docker fueron utilizados para inicializar, personalizar y verificar este servidor institucional:
+                </p>
+                <div class="code-snippet">
+# 1. Despliegue del contenedor institucional en segundo plano exponiendo el puerto 8089
+docker run -d --name nginx1 -p 8089:80 nginx
+
+# 2. Extracción de la plantilla base original de Nginx hacia el directorio de trabajo
+docker cp nginx1:/usr/share/nginx/html/index.html ./index1.html
+
+# 3. Inyección del diseño institucional personalizado hacia el contenedor
+docker cp index1.html nginx1:/usr/share/nginx/html/index.html
+
+# 4. Verificación de conectividad HTTP al servidor institucional
+curl -I http://localhost:8089
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="header-container">
+            <p>&copy; 2026 Práctica Académica de Contenedores y Virtualización Ligera.</p>
+            <p style="margin-top: 0.35rem; font-size: 0.82rem;">
+                Desplegado con <strong>Nginx</strong> sobre motor <strong>Docker</strong> | Nodo Institucional 1 (Puerto 8089)
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>

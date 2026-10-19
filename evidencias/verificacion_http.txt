@@ -1,0 +1,5 @@
+﻿=== VERIFICACIÓN HTTP PUERTO 8089 (nginx1 - Institucional) ===
+HTTP/1.1 200 OK Server: nginx/1.29.8 Date: Mon, 19 Oct 2026 16:39:12 GMT Content-Type: text/html Content-Length: 15092 Last-Modified: Mon, 19 Oct 2026 16:31:17 GMT Connection: keep-alive ETag: "6ad645d5-3af4" Accept-Ranges: bytes 
+
+=== VERIFICACIÓN HTTP PUERTO 8090 (nginx2 - Personal) ===
+HTTP/1.1 200 OK Server: nginx/1.29.8 Date: Mon, 19 Oct 2026 16:39:12 GMT Content-Type: text/html Content-Length: 14315 Last-Modified: Mon, 19 Oct 2026 16:31:53 GMT Connection: keep-alive ETag: "6ad645f9-37eb" Accept-Ranges: bytes 

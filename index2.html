@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil del Estudiante - Servidor Personal Nginx | Nodo 2</title>
+    <style>
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-card: #131b2e;
+            --bg-card-hover: #1b2640;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --text-title: #f8fafc;
+            --text-body: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-subtle: #202d4a;
+            --edit-bg: #422006;
+            --edit-border: #f59e0b;
+            --edit-text: #fde68a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-body);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, #090d16 0%, #161a33 50%, #1a1236 100%);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 3.5rem 1.5rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .avatar-box {
+            width: 110px;
+            height: 110px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-details {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .tag-pill {
+            display: inline-block;
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(6, 182, 212, 0.35);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.25rem 0.85rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.6rem;
+        }
+
+        h1 {
+            color: var(--text-title);
+            font-size: 2.3rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 0.4rem;
+        }
+
+        .profile-role {
+            font-size: 1.15rem;
+            color: var(--accent-purple);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-bio {
+            color: var(--text-muted);
+            font-size: 0.98rem;
+            max-width: 650px;
+        }
+
+        .warning-stripe {
+            background-color: rgba(245, 158, 11, 0.12);
+            border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fcd34d;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Estilo para los campos editables que debe llenar el usuario */
+        .campo-editable {
+            display: inline-block;
+            background-color: var(--edit-bg);
+            color: var(--edit-text);
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            border: 1px dashed var(--edit-border);
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        main {
+            padding: 2.5rem 1.5rem;
+        }
+
+        .section-title {
+            color: var(--text-title);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(to bottom, var(--accent-purple), var(--accent-cyan));
+            border-radius: 2px;
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.75rem;
+            transition: all 0.25s ease;
+        }
+
+        .card:hover {
+            background-color: var(--bg-card-hover);
+            transform: translateY(-3px);
+            border-color: rgba(139, 92, 246, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .card-heading {
+            color: var(--text-title);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+        }
+
+        .card-desc {
+            color: var(--text-body);
+            font-size: 0.95rem;
+            line-height: 1.55;
+        }
+
+        .learning-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+        }
+
+        .learning-num {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            color: #ffffff;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            margin-top: 0.2rem;
+        }
+
+        .learning-content h4 {
+            color: var(--text-title);
+            font-size: 1.05rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .learning-content p {
+            color: var(--text-body);
+            font-size: 0.92rem;
+        }
+
+        .status-box {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 14px;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-emerald);
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .pulse-light {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--accent-emerald);
+            box-shadow: 0 0 10px var(--accent-emerald);
+        }
+
+        .port-info {
+            font-family: monospace;
+            background-color: #050811;
+            padding: 0.4rem 0.85rem;
+            border-radius: 8px;
+            color: #38bdf8;
+            font-size: 0.9rem;
+            border: 1px solid #1e293b;
+        }
+
+        footer {
+            border-top: 1px solid var(--border-subtle);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            background-color: #070a12;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            .profile-header {
+                text-align: center;
+                justify-content: center;
+            }
+            .profile-bio {
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero-banner">
+        <div class="container">
+            <div class="profile-header">
+                <div class="avatar-box">👨‍💻</div>
+                <div class="profile-details">
+                    <span class="tag-pill">Servidor Personal Nginx &bull; Puerto 8090</span>
+                    <h1><span class="campo-editable" title="Ingresa tu nombre completo">[PENDIENTE: Nombre Completo del Estudiante]</span></h1>
+                    <div class="profile-role"><span class="campo-editable" title="Ingresa tu carrera">[PENDIENTE: Carrera / Especialidad en TI]</span></div>
+                    <p class="profile-bio">
+                        <span class="campo-editable" title="Escribe una breve presentación">[PENDIENTE: Breve descripción personal, objetivos académicos y pasión por la tecnología]</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="warning-stripe">
+        ✏️ <strong>Plantilla Personal:</strong> Modifica los recuadros editables con tus intereses reales y tu información de contacto antes de la entrega final.
+    </div>
+
+    <main class="container">
+        <!-- Sección 1: Intereses Tecnológicos -->
+        <h2 class="section-title">Intereses Tecnológicos y Especialización</h2>
+        <div class="grid-cards">
+            <div class="card">
+                <div class="card-icon">🐳</div>
+                <h3 class="card-heading">Contenedores & Docker</h3>
+                <p class="card-desc">
+                    Interés en el empaquetado de aplicaciones, microservicios reproducibles, gestión eficiente de imágenes ligeras y orquestación con herramientas modernas.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🌐</div>
+                <h3 class="card-heading">Servidores Web & Nginx</h3>
+                <p class="card-desc">
+                    Configuración de servidores de alto rendimiento, balanceo de carga HTTP/HTTPS, proxies inversos y optimización de entrega de contenidos estáticos.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🐧</div>
+                <h3 class="card-heading">Linux & Administración</h3>
+                <p class="card-desc">
+                    Manejo de sistemas operativos basados en Linux, comandos de terminal, scripts de automatización Bash y arquitecturas de red basadas en kernel.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🚀</div>
+                <h3 class="card-heading">Área de Interés Personal</h3>
+                <p class="card-desc">
+                    <span class="campo-editable" title="Completa con tus intereses particulares">[PENDIENTE: Ciberseguridad / Cloud Computing / Desarrollo Frontend o Backend / Automatización CI/CD]</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Sección 2: Aprendizajes Adquiridos en la Práctica -->
+        <h2 class="section-title">Aprendizajes Clave de la Práctica Docker</h2>
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="learning-item">
+                <div class="learning-num">1</div>
+                <div class="learning-content">
+                    <h4>Aislamiento Completo de Aplicaciones</h4>
+                    <p>Comprobé que dos servidores web Nginx idénticos pueden ejecutarse en la misma máquina física de forma simultánea e independiente sin causar conflictos de dependencias ni librerías.</p>
+                </div>
+            </div>
+            <div class="learning-item">
+                <div class="learning-num">2</div>
+                <div class="learning-content">
+                    <h4>Mapeo Inteligente de Puertos</h4>
+                    <p>Entendí cómo el parámetro <code>-p 8090:80</code> conecta una solicitud entrante en el puerto 8090 del anfitrión directamente con el puerto 80 estándar dentro del contenedor <code>nginx2</code>.</p>
+                </div>
+            </div>
+            <div class="learning-item">
+                <div class="learning-num">3</div>
+                <div class="learning-content">
+                    <h4>Manipulación de Contenido en Contenedores con <code>docker cp</code></h4>
+                    <p>Aprendí a extraer la plantilla original por defecto de Nginx y a inyectar un nuevo archivo <code>index2.html</code> personalizado hacia el sistema de archivos del contenedor en tiempo de ejecución.</p>
+                </div>
+            </div>
+            <div class="learning-item">
+                <div class="learning-num">4</div>
+                <div class="learning-content">
+                    <h4>Ligereza y Eficiencia Operativa</h4>
+                    <p>Validé que los contenedores levantan en cuestión de milisegundos y consumen una fracción mínima de memoria RAM y CPU en comparación con máquinas virtuales pesadas.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estado del Contenedor -->
+        <div class="status-box">
+            <div class="status-badge">
+                <span class="pulse-light"></span>
+                <span>Servidor Personal nginx2: OPERATIVO</span>
+            </div>
+            <div class="port-info">
+                Host Port: 8090 &rarr; Container Port: 80 (HTTP)
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Página Personal de Demostración &bull; Desarrollada para la Práctica de Servidores Web Nginx con Docker</p>
+            <p style="margin-top: 0.4rem; font-size: 0.8rem; color: #64748b;">
+                Contacto / GitHub: <span class="campo-editable">[PENDIENTE: tu-usuario-github o correo]</span>
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>

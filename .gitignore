@@ -1,0 +1,37 @@
+# Gitignore para práctica Nginx con Docker
+
+# Archivos de entorno y credenciales (Seguridad)
+.env
+.env.*
+*.key
+*.pem
+id_rsa*
+*.cert
+*.pfx
+
+# Archivos de sistema operativo
+Thumbs.db
+Desktop.ini
+desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+._*
+
+# Editores y entornos de desarrollo
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# Archivos temporales y de logs
+*.log
+*.tmp
+*.bak
+temp/
+tmp/
+
+# Archivos intermedios de audio generados durante edición (conservando los finales en audio/)
+audio/*.wav
